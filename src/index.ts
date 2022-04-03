@@ -217,3 +217,46 @@ function qwe7(...rest: any[]): any {
 console.log(qwe7(1, 2, 3, 4, 5));
 console.log(qwe7('a', 'b', 'c'));
 
+/* <T> 泛型 */
+function log<T>(val: T): T{
+    console.log(val);
+    return val;
+}
+// 使用的两种方式
+log<number[]>([1, 2, 3]); // 直接指定类型
+log('qwe'); // 让ts根据类型推断
+
+// 泛型函数类型
+type Log = <T>(val: T) => T;
+let myLog: Log = log
+
+interface Log1 {
+    <T>(val: T): T // 这样只是约束了这个函数
+}
+let result2: Log1 = log
+
+// 泛型类
+class Log2<T> {
+    // static id: T // 不能给静态成员设置为泛型
+    run(val: T){
+        console.log(val);
+        return val;
+    }
+}
+let log2 = new Log2<number>();
+log2.run(1);
+// 不传就可以是任意类型
+let log3 = new Log2();
+log3.run({});
+
+// 泛型约束
+interface Length {
+    length: number
+}
+function log4<T extends Length>(val: T): T {
+    console.log(val.length);
+    return val;
+}
+log4([1]);
+log4('123');
+log4({length: 1});
