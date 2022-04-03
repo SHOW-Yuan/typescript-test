@@ -288,3 +288,69 @@ let foo1: Foo = {
 }
 // 类型“{}”上不存在属性“bar”。
 foo.bar = 1;
+
+/* 
+ * 类型保护机制
+ * ts能够在特定的区块中保证变量属于某个确定的类型
+ * 可以在次区块中放心的引用类型的属性 或者调用此类型的方法
+*/
+enum Type { Strong, Week };
+
+class Java {
+    helloJava(){
+        console.log('hello Java');
+    }
+    java: any
+}
+
+class JavaScript {
+    helloJavaScript(){
+        console.log('hello JavaScript');
+    }
+    javaScript: any
+}
+
+// 类型保护函数
+function isJava(lang: Java | JavaScript): lang is Java {
+    return (lang as Java).helloJava !== undefined;
+}
+function getLanguage(type: Type, x: string | number){
+    let lang = type === Type.Strong ? new Java() : new JavaScript();
+    // 类型断言的方式 代码过于沉重、可读性差
+    // if((lang as Java).helloJava){
+    //     (lang as Java).helloJava();
+    // }else {
+    //     (lang as JavaScript).helloJavaScript();
+    // }
+
+    // instanceof
+    // if(lang instanceof Java){
+    //     lang.helloJava();
+    // }else {
+    //     lang.helloJavaScript();
+    // }
+
+    // in
+    // if('java' in lang){
+    //     lang.helloJava();
+    // }else {
+    //     lang.helloJavaScript();
+    // }
+
+    // typeof
+    // if(typeof x === 'string'){
+    //     x.length
+    // }else {
+    //     x.toFixed();
+    // }
+
+
+    // 类型保护函数
+    if(isJava(lang)){
+        lang.helloJava();
+    }else {
+        lang.helloJavaScript();
+    }
+    return lang;
+}
+getLanguage(Type.Strong, 'abc');
