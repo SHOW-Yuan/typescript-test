@@ -162,9 +162,58 @@ let lib: Lib = (() => {}) as Lib; // 类型断言
 lib.version = '1.0';
 lib.doSomething = () => {}
 
+// 或者定义成函数
 function getLib(){
     let lib: Lib = (() => {}) as Lib; // 类型断言
     lib.version = '1.0';
     lib.doSomething = () => {};
     return lib;
 }
+
+/* 
+ * 函数相关知识点梳理
+*/
+
+// 函数定义
+function qwe(a: number, b: number){
+    return a + b;
+}
+console.log('fun1: ', qwe(1, 2));
+// 函数类型声明
+let qwe1: (a: number, b: number) => number;
+type qwe2 = (a: number, b:number) => number;
+interface qwe3 {
+    (a: number, b:number): number
+}
+
+let qwe4 = (a: number, b?:number) => {
+    return b ? a + b : a;
+}
+console.log('qwe4: ', qwe4(2, 3));
+
+let qwe5 = (a: number, b = 1, c: number, d = 1) => {
+    return a + b + c + d;
+}
+console.log(qwe5(1,undefined,3));
+
+// 剩余参数
+function qwe6(a: number, ...rest: number[]){
+    return a + rest.reduce((pre, cur) => pre + cur);
+}
+console.log(qwe6(1, 2, 3, 4, 5));
+
+// 函数重载
+function qwe7(...rest: number[]): number;
+function qwe7(...rest: string[]): string;
+function qwe7(...rest: any[]): any {
+    let first = rest[0];
+    if(typeof first === 'string'){
+        return rest.join(',');
+    }
+    if(typeof first === 'number'){
+        return rest.reduce((pre, cur)=> pre + cur);
+    }
+}
+console.log(qwe7(1, 2, 3, 4, 5));
+console.log(qwe7('a', 'b', 'c'));
+
