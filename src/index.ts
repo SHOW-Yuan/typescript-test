@@ -260,3 +260,31 @@ function log4<T extends Length>(val: T): T {
 log4([1]);
 log4('123');
 log4({length: 1});
+
+/* 类型推断 */
+// 从右往左 根据值推断变量类型
+// let a: number
+let a = 1;
+// let b: string[]
+let b = ['a'];
+// let c: (string | number)[]
+let c = [1, 'abc'];
+// let d: (val?: number) => number
+let d = (val = 1) => val;
+
+// 从左往右 根据变量推断值类型
+// (property) onkeydown: (((this: GlobalEventHandlers, ev: KeyboardEvent) => any) & ((this: Window, ev: KeyboardEvent) => any)) | null // 看不懂 喵喵喵
+window.onkeydown = (even) => {
+
+}
+
+// 类型断言
+interface Foo {
+    bar: number
+}
+let foo = {} as Foo; // 不推荐 有可能会楼下某些属性 推荐下面的写法
+let foo1: Foo = {
+    bar: 1
+}
+// 类型“{}”上不存在属性“bar”。
+foo.bar = 1;
