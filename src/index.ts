@@ -354,3 +354,168 @@ function getLanguage(type: Type, x: string | number){
     return lang;
 }
 getLanguage(Type.Strong, 'abc');
+
+/* 交叉类型 */
+// 将多个类型合并为一个类型 新类型具有所有类型的特性
+interface DogInterface {
+    r: number,
+    run(): void
+}
+interface CatInterface {
+    r: number,
+    jump(): void
+}
+// 这个变量需满足两个接口的方法
+let pet: DogInterface | CatInterface = {
+    r: 1,
+    run() {},
+    jump() {}
+}
+
+/* 联合类型 */
+// 类型不确定 可以为多个类型的一个
+let lianHe: string | number = 1;
+/* 自变量联合类型 */
+// 限定变量的类型而且还需要限定变量的取值在某一个特定的范围内
+let g: 1 | 2 | 3 = 1;
+let h: 'a' | 'b' | 'c' = 'a';
+
+/* 对象的联合类型 */
+// 如果一个变量是联合类型的话 在类型未确定的情况下 那么会取这个联合类型的共有成员
+// 在类型未确定的情况下取所有类型的交集 而非并集
+
+/* 可区分的联合类型 */
+// 利用两种类型的相同属性来创建不同类型的保护区块
+interface Square {
+    kind: 'square',
+    size: number
+}
+interface Rectangle {
+    kind: 'rectangle',
+    width: number,
+    height: number
+}
+interface Circle {
+    kind: 'circle',
+    r: number
+}
+
+type Shape = Square | Rectangle | Circle;
+function area(s: Shape) {
+    switch(s.kind) {
+        case "square":
+            return s.size * s.size;
+        case "rectangle":
+            return s.width * s.height;
+        case "circle":
+            return Math.PI * s.r;
+        default:
+            return ((e: never) => { throw new Error(e) })(s)
+    }
+}
+console.log(area({ kind: 'circle', r: 2 }));
+
+/* 索引类型 */
+// 索引类型的查询操作符 keyof T （类型T的所有公共属性的字面量的联合类型
+interface KeyObj {
+    a: number,
+    b: number
+}
+// let key: "a" | "b"
+let key: keyof KeyObj;
+
+// 索引访问操作符 T[K]
+// 对象T的属性K所代表的的类型
+let value: KeyObj['a']
+
+// 泛型约束 T extends U
+// 泛型变量可以通过继承某个类型或者某个属性
+
+/* 示例 */
+let indexsType = {
+    a: 1,
+    b: 2,
+    c: 3
+}
+// function getValues(obj: any, keys: string[]) {
+//     return keys.map(key => obj[key])
+// };
+
+// 改造后的方法
+/* 
+ * keys里的元素一定是obj里的属性
+ * <T, K> T约束obj K约束keys
+ * <T, K extends keyof T> 给K添加约束 让他继承T的所有类型
+ * : T[K][] 返回的是一个数组 数组的元素的类型就是属性K对应的类型
+*/
+function getValues<T, K extends keyof T>(obj: T, keys: K[]): T[K][] {
+    return keys.map(key => obj[key])
+};
+console.log(getValues(indexsType, ['b', 'a']));
+// 两个undefined 查找没有的属性并不会报错
+// console.log(getValues(indexsType, ['f', 'd']));
+
+
+/* 映射类型 */
+// 可以从一个旧的类型来生成一个新的类型 比如: 把一个类型中的所有属性变成只读
+// 3个同态 只会作用于obj属性而不会引入新的属性
+interface Obj1 {
+    a: number,
+    b: string, 
+    c: boolean
+}
+// 创建只读
+type ReadonlyObj = Readonly<Obj1>;
+// 创建可选
+type PartialObj = Partial<Obj1>;
+// 抽取所选属性
+type PickObj = Pick<Obj1, 'a' | 'b'>;
+
+// 非同态 会创建一些新的属性
+// 映射类型是预先定义的泛型接口 通常还会结合索引类型获取对象的属性和属性值 从而将一个对象映射成我们想要的结果
+type RecordObj = Record<'x' | 'y', Obj1>;
+
+
+/* 条件类型 */
+// 条件类型使类型具有不唯一性 同样也增加了语言的灵活性
+// T extends U ? X : Y
+type TypeName<T> =
+    T extends string ? "string" :
+    T extends number ? "number" :
+    T extends boolean ? "boolean" :
+    T extends undefined ? "undefined" :
+    T extends Function ? "function" :
+    "object";
+
+/* 根据上面的推断可以得出对应的类型 */
+// type T1 = "string"
+type T1 = TypeName<string>;
+// type T2 = "object"
+type T2 = TypeName<string[]>;
+
+/* 三元式的条件类型 */
+// (A | B) extends U ? X : Y
+// 拆解：(A extends U ? X : Y) | (B extends U ? X : Y)
+
+// type T3 = "string" | "object"
+type T3 = TypeName<string | string[]>;
+
+// 类型的过滤
+type Diff<T, U> = T extends U ? never : T;
+type T4 = Diff<"a" | "b" | "c", "a" | "e">;
+// Diff<"a", "a" | "e"> | Diff<"b", "a" | "e"> | Diff<"c", "a" | "e">
+// never | "b" | "c"
+// "b" | "c"
+
+// 进一步扩展
+type NotNull<T> = Diff<T, undefined | null>;
+type T5 = NotNull<string | number | undefined | null>
+
+/* 更多可通过类库查看 */
+// Exclude<T, U>
+// NonNullable<T>
+
+// Extract<T, U>
+type T6 = Extract<"a" | "b" | "c", "a" | "e">
+// ReturnType<T>
+type T7 = ReturnType<() => string>
