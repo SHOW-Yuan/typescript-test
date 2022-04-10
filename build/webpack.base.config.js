@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-    entry: './src/index.ts',
+    entry: './src/merge/index.ts',
     output: {
         filename: 'app.js'
     },
