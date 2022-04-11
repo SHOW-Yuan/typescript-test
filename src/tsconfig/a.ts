@@ -1,0 +1,1 @@
+const z1:string = '嘿嘿嘿';

@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    // "incremental": true,                // 增量编译：在第一次编译后会生成一个可以存贮编译信息的文件 在第二次编译的时候做增量编译 提升编译的速度
+    // "tsBuildInfoFile": "./buildFile",   // 增量编译文件的储存位置
+    // "diagnostics": true                 // 打印诊断信息
+
+    "target": "ES5",                        // 目标语言的版本
+    "module": "AMD",                        // 生成代码的模块标准
+    "outFile": "./app.js",                  // 将多个相互依赖的文件生成一个文件 可以用在AMD模块中
+
+
+  },
+  // 需要编译的单个文件的列表
+  "files": [
+    "src/tsconfig/a.ts"
+  ],
+  // 需要编译的文件或者目录
+  "include": [
+    // "src"
+    "src/*" // 表示编译src目录下的文件（不包括文件夹里的文件
+  ],
+  // 需要排除的文件或文件夹 默认排除node_module和声明文件
+  "exclude": [
+    "src/lib"
+  ],
+}
+
+
+/* 
+ * 工程引用
+ * 背景：有时会在一个代码仓库中存放多个需要单独构建的工程
+*/
+
+// {   
+//     // 引用公共配置
+//     "extends": "./tsconfig.json",
+//     "compilerOptions": {
+//         // 指定输入的目录
+//         "outDir": "./dist/serve"
+//     },
+//     // 依赖的工程目录
+//     "references": [
+//         { "path": "../common" }
+//     ]
+// }
