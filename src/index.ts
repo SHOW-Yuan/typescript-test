@@ -519,3 +519,5 @@ type T5 = NotNull<string | number | undefined | null>
 type T6 = Extract<"a" | "b" | "c", "a" | "e">
 // ReturnType<T>
 type T7 = ReturnType<() => string>
+
+let aa = 1;
